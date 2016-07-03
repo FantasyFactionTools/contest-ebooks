@@ -1,0 +1,192 @@
+/*===Reset Code===*/
+html, body, div, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, center, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+}
+
+/* Do Not reset ol, ul, or table for MOBI 7. It blows out all styling */
+
+/*===GENERAL PRESENTATION===*/
+* {color:#222; font-family: 'Libre Baskerville', serif;}
+
+/*===Body Presentation and Margins===*/
+body
+{
+	text-align: left;
+	line-height: 160%;
+}
+
+/*===Headings===*/
+/* After page breaks, Kindle does not render margins above the content unless there is a file split in the package. */
+h1
+{
+	text-indent: 0;
+	text-align: center;
+	font-size: 2.0em;
+	font-weight: bold;
+	page-break-before: always;
+}
+
+h2
+{
+	text-indent: 0;
+	text-align: center;
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+h3
+{
+	text-indent: 0;
+	text-align: left;
+	font-size: 1.4em;
+	font-weight: bold;
+}
+
+h4
+{
+	text-indent: 0;
+	text-align: left;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+h5
+{
+	text-indent: 0;
+	text-align: left;
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+h6
+{
+	text-indent: 0;
+	text-align: left;
+	font-size: 1.0em;
+	font-weight: bold;
+}
+
+
+/*===Paragraph Elements===*/
+/* Margins are usually added on the top, left, and right, but not on the bottom to prevent Kindle not collapsing white space properly */
+
+/*firstline indent for fiction*/
+p
+{
+	text-indent: 1.25em;
+	margin: 0;
+}
+
+
+img {margin: 1em 0;}
+h1 {color: #555;}
+h2 {color: #999;}
+blockquote p {margin:1em 0 0 0; text-indent:0; font-style:italic; }
+blockquote+p {margin:0; text-indent:1em;}
+
+h1 { font-size:1.5em; text-align:center; }
+h2 { font-size:1em; text-align:center; }
+h3 { font-size:1em; text-align: left; }
+h4 { font-size:.9em; text-align: left; }
+h5 { font-size:.8em; text-align: left; }
+h6 { font-size:.7em; text-align: left; }
+
+/*  Disable hyphenation for headings to avoid single-syllable-lines.*/
+h1,
+h2 {
+	  -epub-hyphens: none;
+  -webkit-hyphens: none;
+     -moz-hyphens: none;
+          hyphens: none;
+}
+
+/* Set the minimum amount of lines to show up on a separate page. (There is not much support for this at the moment.)
+*/
+p,
+blockquote {
+  orphans: 2;
+  widows: 2;
+}
+
+/*  Turn on hyphenation for paragraphs and captions only.
+*/
+p,
+figcaption {
+	  -epub-hyphens: auto;
+  -webkit-hyphens: auto;
+     -moz-hyphens: auto;
+          hyphens: auto;
+}
+
+/*  Shortcodes for page-break rules.
+    Use data attributes to designate if and how the page should be broken before, inside or after an element.
+*/
+h1, h2, h3, h4, h5, h6,
+table, img, figure, video,
+[data-page-break~=inside][data-page-break~=avoid] { page-break-inside:  avoid; }
+[data-page-break~=after]                          { page-break-after:  always; }
+h1, h2, h3, h4, h5, h6,
+[data-page-break~=after][data-page-break~=avoid]  { page-break-after:   avoid; }
+[data-page-break~=before]                         { page-break-before: always; }
+[data-page-break~=before][data-page-break~=avoid] { page-break-before:  avoid; }
+img[data-page-break~=before]                      { page-break-before:   left; }
+
+.pagebreak {page-break-before: always;}
+
+.booktitle {font-size:1.5em; font-weight:bold; text-align:center; margin:30% 0 0 0;}
+.booksubtitle {font-size:1em; text-align:center; margin:10% 0 0 0;}
+.bookcopyright {font-size:.5em;text-align:center; margin:80% 0 0 0;}
+.spacer {margin: 1em 0 0 0;}
+.center {text-align: center;}
+
+img {
+	display: block;
+	width: auto;
+	height: 30%;
+	margin: 1em auto;
+}
+
+hr {
+  margin: 40px 0;
+  background:url(../images/prose_separator.png) no-repeat top center;
+  height:14px;
+  border:none !important;
+  width: 100% !important;
+}
+
+
+.shortstory > p:first-of-type:first-letter {
+	font-size: 300%;
+	font-weight: bold;
+	height: 1em;
+	float: left;
+	margin: 0.2em 0.125em -0.4em 0.1em;
+}
+
+.shortstory > p:first-of-type {
+	text-indent:0;
+}
+
+@media amzn-kf8{ 
+	.shortstory > p:first-of-type:first-letter {
+		font-size: 300%;
+		font-weight: bold;
+		height: 1em;
+		float: left;
+		margin: -0.2em 0.1em 0 0.1em;
+	}
+}
+
+@media amzn-mobi{
+	/* pseudo dropcaps for e-ink Kindles */
+	.shortstory > p:first-of-type:first-letter {
+		font-size: 1.5em;
+		font-weight: bold;
+	}
+}
+

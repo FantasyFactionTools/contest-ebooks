@@ -1,2 +1,2 @@
 # contest-ebooks
-Python and Bash scripts to compile Fantasy Faction Monthly Contest stories and generate easy-to-read ebooks.
+Python and Bash scripts to build ebooks from the Fantasy Faction Monthly Contest
