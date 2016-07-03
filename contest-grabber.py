@@ -10,19 +10,12 @@ import sys
 from sys import version_info
 import os.path
 import os, shutil
-import datetime
 import urllib2
-import urllib
-import unicodedata
-import re
 import codecs
 import requests
 import json
-import string
 import hashlib
 from pyquery import PyQuery as pq
-import HTMLParser
-from dateutil import parser
 import ffParseTools
 
 
@@ -361,7 +354,9 @@ def main(argv):
 	metaData = fetchData(options)
 	writeConf(metaData)
 	writeHtml(metaData)
-	writeCritTemplate(metaData)
+
+	if options["showAuthor"][0].lower() == "y":
+		writeCritTemplate(metaData)
 
 	print "\n**********\nEND FETCH"
 

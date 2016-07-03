@@ -60,6 +60,8 @@ pandoc -s "output/${ShortTitle}-rtf.html" -o "output/${ShortTitle}.docx"
 
 #exit 0
 
+# move the critique file to its spot.
+mv "critiques-${ShortTitle}.md" critiques
 
 # push the ebook files
 scp "output/${ShortTitle}.epub" m3mnoch@chapmanholdings.com:/var/www/www.m3mnoch.com/static/ff-books/

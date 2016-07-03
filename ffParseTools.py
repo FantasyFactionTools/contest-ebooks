@@ -1,22 +1,11 @@
 import os
-import sys
-import datetime
-import urllib2
 import urllib
 import unicodedata
 import re
-import codecs
-
 import markdown
-import requests
-import json
 import string
 from pyquery import PyQuery as pq
 from dateutil import parser
-
-import HTMLParser
-from tidylib import tidy_fragment
-from lxml.html.clean import clean_html
 
 
 # define some functions
