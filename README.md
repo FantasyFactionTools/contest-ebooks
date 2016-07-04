@@ -7,7 +7,7 @@ Python and Bash scripts to build ebooks from the Fantasy Faction Monthly Contest
 - Markdown
 - um...  maybe more?  update me when you install from scratch, please!
 
-#### brew install Pre-requisites (you non-OSX people will have to figure this one out on your own)
+#### brew install Pre-requisites (sorry! you non-OSX people will have to figure this one out on your own)
 - calibre
 - pandoc
 - imagemagick
@@ -29,7 +29,7 @@ This is how you go about publishing the ebooks for the writing contest community
 
 #### Publishing the ebooks
 1. Run the Bash script to publish the ebook versions. ```$: ./publish-ff-book.sh```
-1. It will then ask you the loation of your local copy of the Fantasy Faction Tools website repository. ```Where is your local copy of FantasyFactionTools.github.io? (../FantasyFactionTools.github.io/):```
+1. It will then ask you the location of your local copy of the Fantasy Faction Tools website repository. ```Where is your local copy of FantasyFactionTools.github.io? (../FantasyFactionTools.github.io/):```
 1. Afterwards, it copys/commits/pushes the changes to hosting site
 1. And, finally, prints a handy bit of code to copy/paste into a post for everyone in the forums.
 
