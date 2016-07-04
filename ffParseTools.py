@@ -124,8 +124,7 @@ def formatStoryHtml(story, metaData):
 
 	htmlOut = '<div class="shortstory"><h1 id="story' + story['index'] + '">' + story['title'] + '</h1>'
 
-	if metaData['ShowAuthor'] == 1:
-		htmlOut = htmlOut + '<h2>By ' + story['author'] + '</h2>'
+	htmlOut = htmlOut + '<h2 class="authorByline">By ' + story['author'] + '</h2>'
 
 	story['html'] = "<p>" + story['html'].replace("<br /><br />", "</p><p>") + "</p>"
 	story['html'] = story['html'].replace("<br><br>", "</p><p>")

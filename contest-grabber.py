@@ -205,6 +205,8 @@ def writeHtml(metaData):
 	htmlOut = htmlOut + '<meta name="cover" content="cover.jpg"/>'
 	htmlOut = htmlOut + '<link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700" rel="stylesheet" type="text/css">'
 	htmlOut = htmlOut + '<link type="text/css" rel="stylesheet" href="' + metaData['CSS'] + '"/>'
+	if metaData['ShowAuthor'] == 0:
+		htmlOut = htmlOut + '<link type="text/css" rel="stylesheet" href="' + metaData['CSS'].replace(".css", "-noauthor.css") + '"/>'
 	htmlOut = htmlOut + '<meta name="format" content="complete"/>'
 	htmlOut = htmlOut + '</head><body>'
 
@@ -355,7 +357,7 @@ def main(argv):
 	writeConf(metaData)
 	writeHtml(metaData)
 
-	if options["showAuthor"][0].lower() == "y":
+	if options["showAuthor"] == 1:
 		writeCritTemplate(metaData)
 
 	print "\n**********\nEND FETCH"

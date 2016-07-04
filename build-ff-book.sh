@@ -62,39 +62,3 @@ pandoc -s "output/${ShortTitle}-rtf.html" -o "output/${ShortTitle}.docx"
 
 # move the critique file to its spot.
 mv "critiques-${ShortTitle}.md" critiques
-
-# push the ebook files
-scp "output/${ShortTitle}.epub" m3mnoch@chapmanholdings.com:/var/www/www.m3mnoch.com/static/ff-books/
-scp "output/${ShortTitle}.mobi" m3mnoch@chapmanholdings.com:/var/www/www.m3mnoch.com/static/ff-books/
-scp "output/${ShortTitle}.docx" m3mnoch@chapmanholdings.com:/var/www/www.m3mnoch.com/static/ff-books/
-scp "output/${ShortTitle}.html" m3mnoch@chapmanholdings.com:/var/www/www.m3mnoch.com/static/ff-books/
-scp "cover.jpg" m3mnoch@chapmanholdings.com:/var/www/www.m3mnoch.com/static/ff-books/covers/${ShortTitle}-cover.jpg
-
-
-if [ $ShowAuthor -eq 0 ]; then
-echo ""
-echo ""
-echo "=================================================================="
-echo "- [b]Authors only on Table of Contents[/b] -"
-echo "[i]generic epub:[/i]"
-echo "http://m3mnoch.com/static/ff-books/${ShortTitle}.epub"
-echo ""
-echo "[i]kindle mobi:[/i]"
-echo "http://m3mnoch.com/static/ff-books/${ShortTitle}.mobi"
-echo ""
-echo "[i]word document:[/i]"
-echo "http://m3mnoch.com/static/ff-books/${ShortTitle}.docx"
-echo "=================================================================="
-else
-echo "=================================================================="
-echo "- [b]Authors on Each Story[/b] -"
-echo "[i]generic epub:[/i]"
-echo "http://m3mnoch.com/static/ff-books/${ShortTitle}.epub"
-echo ""
-echo "[i]kindle mobi:[/i]"
-echo "http://m3mnoch.com/static/ff-books/${ShortTitle}.mobi"
-echo ""
-echo "[i]word document:[/i]"
-echo "http://m3mnoch.com/static/ff-books/${ShortTitle}.docx"
-echo "=================================================================="
-fi
