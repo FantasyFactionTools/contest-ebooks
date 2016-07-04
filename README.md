@@ -19,40 +19,20 @@ This is how you go about publishing the ebooks for the writing contest community
 
 ### Building the ebooks
 1. Change to the directory where this repo is located.
-1. Run the Bash script to build the book.
-```
-$: ./build-ff-book.sh
-```
+1. Run the Bash script to build the book. ```$: ./build-ff-book.sh```
 1. It will then ask you some questions.
-    1. Are you building the version with authors on each story?
-```
-Show the authors? (y/n):
-```
-    1. Have you already pulled down the HTML from the forums and stored it in local cache?
-```
-Use existing cache? (y/n):
-```
-    1. What is the URL for the submissions page?
-```
-What is the submissions URL?:
-```
-    1. What is the URL for the voting page?  (It pulls official title/authors from there)
-```
-What is the voting URL?:
-```
+    1. Are you building the version with authors on each story? ```Show the authors? (y/n):```
+    1. Have you already pulled down the HTML from the forums and stored it in local cache? ```Use existing cache? (y/n):```
+    1. What is the URL for the submissions page? ```What is the submissions URL?:```
+    1. What is the URL for the voting page?  (It pulls official title/authors from there) ```What is the voting URL?:```
 1. Then, it grinds through, building the various ebook versions, and storing them in the _output_ directory
 
 ### Publishing the ebooks
-1. Run the Bash script to publish the ebook versions.
-```
-$: ./publish-ff-book.sh
-```
-1. It will then ask you the loation of your local copy of the Fantasy Faction Tools website repository.
-```
-Where is your local copy of FantasyFactionTools.github.io? (../FantasyFactionTools.github.io/):
-```
+1. Run the Bash script to publish the ebook versions. ```$: ./publish-ff-book.sh```
+1. It will then ask you the loation of your local copy of the Fantasy Faction Tools website repository. ```Where is your local copy of FantasyFactionTools.github.io? (../FantasyFactionTools.github.io/):```
 1. Afterwards, it copys/commits/pushes the changes to hosting site
-1. And, finally, prints a handy bit of forum code to copy/paste into a post for everyone to see.
+1. And, finally, prints a handy bit of code to copy/paste into a post for everyone in the forums.
+
 ```
 ===========================================================
 [i]kindle mobi:[/i]
