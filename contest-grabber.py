@@ -12,6 +12,8 @@ import os.path
 import os, shutil
 import urllib2
 import codecs
+
+import markdown
 import requests
 import json
 import hashlib
@@ -67,8 +69,10 @@ def fetchData(options):
 		file = open("cache/options.json", 'r')
 		options = json.loads(file.read())
 		file.close()
-		options["showAuthor"] = oldOptions['showAuthor'] 
-		options["useCache"] = oldOptions['useCache'] 
+		options["showAuthor"] = oldOptions["showAuthor"]
+		options["useCache"] = oldOptions["useCache"]
+		options["generateConf"] = oldOptions["generateConf"]
+		options["buildFootnotes"] = oldOptions["buildFootnotes"]
 
 		print "Fetching data from CACHE"
 		file = open("cache/urls.json", 'r')
@@ -205,7 +209,7 @@ def writeHtml(metaData):
 	htmlOut = htmlOut + '<meta name="cover" content="cover.jpg"/>'
 	htmlOut = htmlOut + '<link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700" rel="stylesheet" type="text/css">'
 	htmlOut = htmlOut + '<link type="text/css" rel="stylesheet" href="' + metaData['CSS'] + '"/>'
-	if metaData['ShowAuthor'] == 0:
+	if int(metaData['ShowAuthor']) == 0:
 		htmlOut = htmlOut + '<link type="text/css" rel="stylesheet" href="' + metaData['CSS'].replace(".css", "-noauthor.css") + '"/>'
 	htmlOut = htmlOut + '<meta name="format" content="complete"/>'
 	htmlOut = htmlOut + '</head><body>'
@@ -246,6 +250,38 @@ def writeHtml(metaData):
 		target.write(story['html'])
 		target.close()
 
+		# node object for editing
+		htmlObj = pq(storyHtmlString)
+
+		# generate the footnote files if we need them.
+		if "buildFootnotes" in metaData and metaData["buildFootnotes"] == 1:
+			print "Building footnotes directory."
+			footnoteDirName = "footnotes/" + metaData['ShortTitle'].replace("-noauthor", "")
+			if not os.path.exists(footnoteDirName):
+				os.makedirs(footnoteDirName)
+
+			footnoteFileName = footnoteDirName + "/" + ffParseTools.slugify(story['author']) + ".md"
+			if not os.path.isfile(footnoteFileName):
+				target = codecs.open(footnoteFileName, 'w', "utf-8")
+				target.truncate()
+				target.close()
+
+			print "footnote filename: " + footnoteFileName
+			if os.path.isfile(footnoteFileName):
+				f = open(footnoteFileName, 'r')
+				footnote = f.read().decode("utf8")
+				f.close()
+
+				htmlObj.append("<hr/>" + markdown.markdown(footnote))
+
+		else:
+			print "Skipping footnotes file for " + story['author'] + "."
+
+
+		if "ShowAuthor" in metaData and metaData["ShowAuthor"] == 0:
+			htmlObj(".authorByline").remove()
+
+		storyHtmlString = htmlObj.outer_html()
 		htmlOut = htmlOut + storyHtmlString
 
 	htmlOut = htmlOut + '</body></html>'
@@ -342,6 +378,18 @@ def main(argv):
 		options["showAuthor"] = 1
 	else:
 		options["showAuthor"] = 0
+
+	options["generateConf"] = getUserData("Auto-generate ebook.conf? (y/n)")
+	if options["generateConf"][0].lower() == "y":
+		options["generateConf"] = 1
+	else:
+		options["generateConf"] = 0
+
+	options["buildFootnotes"] = getUserData("Use footnotes? (y/n)")
+	if options["buildFootnotes"][0].lower() == "y":
+		options["buildFootnotes"] = 1
+	else:
+		options["buildFootnotes"] = 0
 
 	options["useCache"] = getUserData("Use existing cache? (y/n)")
 	if options["useCache"][0].lower() == "n":

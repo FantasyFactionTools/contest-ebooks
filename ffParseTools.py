@@ -2,6 +2,10 @@ import os
 import urllib
 import unicodedata
 import re
+
+import ConfigParser
+
+import StringIO
 import markdown
 import string
 from pyquery import PyQuery as pq
@@ -19,34 +23,58 @@ def getMetadata(htmlString, options):
 	metaData['ShortTitle'] = "CurrentContestName"
 	metaData['Author'] = "Various Authors"
 	metaData['ShowAuthor'] = options['showAuthor']
+	metaData['generateConf'] = options['generateConf']
+	metaData['buildFootnotes'] = options['buildFootnotes']
 	metaData['Revision'] = "1.0"
 	metaData['Series'] = "Fantasy Faction Writing Contest"
 	metaData['CSS'] = "css/ebook.css"
 
-	######################################################
-	# find the contest metadata updates
-	# WARNING - very, very fragile.
-
+	# prep the object.
 	htmlObj = pq(htmlString)
 
-	if htmlObj.find('.post').eq(0).find('span').eq(0) is not None:
-		print "span title"
-		metaData['Title'] = htmlObj.find('.post').eq(0).find('span').eq(0).text().strip()
-
-	print "== " + metaData['Title'] + " =="
-
-	metaData['ShortTitle'] = slugify(metaData['Title'])
-	if options['showAuthor'] == 0:
-		metaData['ShortTitle'] = metaData['ShortTitle'] + "-noauthor"
-
-	metaData['ImageUrl'] = htmlObj.find('.post').eq(0).find('img').eq(0).attr('src')
-
+	# parse out the date.
 	rawDateTime = htmlObj.find('.keyinfo .smalltext').eq(0).text()
 	print "rawDateTime: " + rawDateTime[6:-2]
 	metaData['Date'] = rawDateTime[6:-2]
-	contestDate = parser.parse(metaData['Date'])
-	metaData['ContestMonth'] = contestDate.strftime("%Y-%M")
-	metaData['Subtitle'] = "Fantasy Faction Monthly Writing Contest Anthology, " + contestDate.strftime("%B %Y")
+
+	if options["generateConf"] == 0:
+		######################################################
+		# read the existing metadata from the file
+
+		ini_str = '[root]\n' + open('ebook.conf', 'r').read()
+		ini_fp = StringIO.StringIO(ini_str)
+		configParser = ConfigParser.RawConfigParser()
+		configParser.readfp(ini_fp)
+
+		metaData['Title'] = configParser.get("root", "Title").replace("\"", "")
+		metaData['ShortTitle'] = configParser.get("root", "ShortTitle").replace("\"", "").replace("-noauthor", "")
+		metaData['Subtitle'] = configParser.get("root", "Subtitle").replace("\"", "")
+		metaData['Series'] = configParser.get("root", "Series").replace("\"", "")
+		metaData['ContestMonth'] = configParser.get("root", "ContestMonth").replace("\"", "")
+		metaData['ShowAuthor'] = configParser.get("root", "ShowAuthor").replace("\"", "")
+		metaData['Author'] = configParser.get("root", "Author").replace("\"", "")
+		metaData['ImageUrl'] = configParser.get("root", "ImageUrl").replace("\"", "")
+
+	else:
+		######################################################
+		# find the contest metadata updates
+		# WARNING - very, very fragile.
+
+		if htmlObj.find('.post').eq(0).find('span').eq(0) is not None:
+			print "span title"
+			metaData['Title'] = htmlObj.find('.post').eq(0).find('span').eq(0).text().strip()
+
+		print "== " + metaData['Title'] + " =="
+
+		metaData['ShortTitle'] = slugify(metaData['Title'])
+		metaData['ImageUrl'] = htmlObj.find('.post').eq(0).find('img').eq(0).attr('src')
+
+		contestDate = parser.parse(metaData['Date'])
+		metaData['ContestMonth'] = contestDate.strftime("%Y-%M")
+		metaData['Subtitle'] = "Fantasy Faction Monthly Writing Contest Anthology, " + contestDate.strftime("%B %Y")
+
+	if options['showAuthor'] == 0:
+		metaData['ShortTitle'] = metaData['ShortTitle'] + "-noauthor"
 
 	introText = htmlObj.find('.post').eq(0).html()
 	introText = introText.replace("<br />", "--br--")
@@ -216,14 +244,6 @@ def formatStoryHtml(story, metaData):
 	#re.search('[a-zA-Z]', the_string)
 
 	htmlOut = htmlOut + storyHtmlString
-
-	footnoteFileName = "footnotes/" + metaData['ShortTitle'] + "/" + story['author'] + ".md"
-	print "footnote filename: " + footnoteFileName
-	if os.path.isfile(footnoteFileName):
-		f = open(footnoteFileName, 'r')
-		footnote = f.read().decode("utf8")
-		f.close()
-		htmlOut = htmlOut + "<hr/>" + markdown.markdown(footnote)
 
 	htmlOut = htmlOut + "</div>"
 
