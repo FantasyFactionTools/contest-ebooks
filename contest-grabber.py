@@ -51,7 +51,13 @@ def fetchData(options):
 		navs = htmlObj.find('.navPages')
 		for node in navs:
 			tempUrl = node.attrib['href'].replace("!", "%21")
-			urls.append({"url":tempUrl, "hash":hashlib.md5(tempUrl).hexdigest()})
+			canAdd = True
+			for urlData in urls:
+				if urlData['hash'] == hashlib.md5(tempUrl).hexdigest():
+					canAdd = False
+
+			if canAdd:
+				urls.append({"url":tempUrl, "hash":hashlib.md5(tempUrl).hexdigest()})
 
 		#urls = sorted(set(urls))
 		print "Parsed URLs"
@@ -127,7 +133,7 @@ def fetchData(options):
 		print "working on page: " + urlData['hash'] + ": " + urlData['url']
 		pageHtml = ""
 
-		if not os.path.isfile("cache/" + urls[0]['hash']):
+		if not os.path.isfile("cache/" + urlData['hash']):
 			print "Fetching pageHtml from URL"
 
 			request = urllib2.Request(urlData['url'])
@@ -135,13 +141,13 @@ def fetchData(options):
 			response = urllib2.urlopen(request)
 			pageHtml = response.read().decode('utf-8', 'ignore')
 
-			target = codecs.open("cache/" + urls[0]['hash'], 'w', "utf-8")
+			target = codecs.open("cache/" + urlData['hash'], 'w', "utf-8")
 			target.write(pageHtml)
 			target.close()
 
 		else:
 			print "Fetching pageHtml from CACHE"
-			file = open("cache/" + urls[0]['hash'], 'r')
+			file = open("cache/" + urlData['hash'], 'r')
 			pageHtml = file.read().decode("utf8")
 			file.close()
 

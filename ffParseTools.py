@@ -99,7 +99,7 @@ def processPost(post, storyTitles):
 		story['title'] = story['author']
 
 		for storyTitle in storyTitles:
-			if story['author'] in storyTitle:
+			if slugify(story['author']) in slugify(storyTitle):
 
 				if " - " in storyTitle:
 					storyAuthorArray = storyTitle.split(" - ")
@@ -253,6 +253,7 @@ def formatStoryHtml(story, metaData):
 
 def slugify(str):
 	slug = unicodedata.normalize("NFKD",unicode(str)).encode("ascii", "ignore")
+	slug = slug.replace("_", "-")
 	slug = re.sub(r"[^\w]+", " ", slug)
 	slug = "-".join(slug.lower().strip().split())
 	return slug
