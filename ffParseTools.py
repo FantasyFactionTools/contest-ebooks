@@ -18,7 +18,7 @@ def getMetadata(htmlString, options):
 	# configure the metadata
 	metaData = {}
 	metaData['stories'] = []
-	
+
 	metaData['Title'] = "Current Contest Name"
 	metaData['ShortTitle'] = "CurrentContestName"
 	metaData['Author'] = "Various Authors"
@@ -88,8 +88,21 @@ def getMetadata(htmlString, options):
 	return metaData
 
 
-def processPost(post, storyTitles):
-	if post.find('.alt2 div').eq(0).html() is None:
+def processPost(post, storyTitle, storyCount):
+	foundStory = False
+
+
+	if post.find('.alt2 div').eq(0).html() is not None:
+		post.find('.alt2 div').addClass("possibleStory")
+		foundStory = True
+
+	elif "[spoiler]" in post.html():
+		post = pq(post.html().replace("[spoiler]", "<div class=\"possibleStory\">"))
+		post = pq(post.html().replace("[/spoiler]", "</div>"))
+		foundStory = True
+
+
+	if not foundStory:
 		return None
 
 	else:
@@ -98,31 +111,30 @@ def processPost(post, storyTitles):
 		story['author'] = post.find('.poster a').eq(0).text().strip()
 		story['title'] = story['author']
 
-		for storyTitle in storyTitles:
-			if slugify(story['author']) in slugify(storyTitle):
+		storyAuthorArray = storyTitle.split(" by ")
+		if " - " in storyTitle:
+			storyAuthorArray = storyTitle.split(" - ")
+		elif ", by " in storyTitle:
+			storyAuthorArray = storyTitle.split(", by ")
 
-				if " - " in storyTitle:
-					storyAuthorArray = storyTitle.split(" - ")
-				elif ", by " in storyTitle:
-					storyAuthorArray = storyTitle.split(", by ")
-				elif " by " in storyTitle:
-					storyAuthorArray = storyTitle.split(" by ")
+		story['title'] = storyAuthorArray[0].strip()
+		if len(storyAuthorArray) > 1:
+			story['author'] = storyAuthorArray[1].strip()
 
-				story['title'] = storyAuthorArray[0].strip()
-				story['author'] = storyAuthorArray[1].strip()
-				break
+		if not story['author']:
+			story['author'] = "Anonymous"
 
 		print "=== Start Processing: " + story['title'] + " by " + story['author']
 
-		mainBodyObj = post.find('.alt2 div').eq(0)
+		mainBodyObj = post.find('.possibleStory').eq(0)
 		spoilerCount = len(mainBodyObj.html())
 
-		print "number of spoiler tags: " + str(len(post.find('.alt2 div')))
+		print "number of spoiler tags: " + str(len(post.find('.possibleStory')))
 
 		# look for the largest spoiler tag because sometimes there are two.
 		# *sigh*
-		if len(post.find('.alt2 div')) > 1:
-			for possibleBody in post.find('.alt2 div'):
+		if len(post.find('.possibleStory')) > 1:
+			for possibleBody in post.find('.possibleStory'):
 				if pq(possibleBody).html() is not None:
 					print "spoilerCount:" + str(spoilerCount) + ", the length:" + str(len(pq(possibleBody).html()))
 					if spoilerCount < len(pq(possibleBody).html()):
@@ -130,10 +142,10 @@ def processPost(post, storyTitles):
 						print "new spoilerCount: " + str(spoilerCount)
 						mainBodyObj = pq(possibleBody)
 
-		if mainBodyObj.find('.alt2 div') is not None:
+		if mainBodyObj.find('.possibleStory') is not None:
 			# there's another stupid spoiler in the spoiler.
 			# this is pretty janky.
-			for spoilerNode in mainBodyObj.find('.alt2 div'):
+			for spoilerNode in mainBodyObj.find('.possibleStory'):
 				spoiler = pq(spoilerNode).clone()
 				spoiler.attr("style", "")
 				mainBodyObj.append(spoiler)
@@ -151,6 +163,7 @@ def processPost(post, storyTitles):
 def formatStoryHtml(story, metaData):
 
 	htmlOut = '<div class="shortstory"><h1 id="story' + story['index'] + '">' + story['title'] + '</h1>'
+	print htmlOut
 
 	htmlOut = htmlOut + '<h2 class="authorByline">By ' + story['author'] + '</h2>'
 
@@ -167,9 +180,9 @@ def formatStoryHtml(story, metaData):
 	for htmlNode in storyObj.children('p'):
 		htmlObj = pq(htmlNode)
 
-		exclude = set(string.punctuation)
-		potentialTitle = ''.join(ch for ch in htmlObj.text() if ch not in exclude).lower()
-		existingTitle = ''.join(ch for ch in story['title'] if ch not in exclude).lower()
+		include = set(string.ascii_letters)
+		potentialTitle = ''.join(ch for ch in htmlObj.text() if ch in include).lower()
+		existingTitle = ''.join(ch for ch in story['title'] if ch in include).lower()
 		#print "comparing: " + potentialTitle + "|" + existingTitle
 
 		if potentialTitle == existingTitle:
@@ -180,9 +193,9 @@ def formatStoryHtml(story, metaData):
 	for htmlNode in storyObj.children('div'):
 		htmlObj = pq(htmlNode)
 
-		exclude = set(string.punctuation)
-		potentialTitle = ''.join(ch for ch in htmlObj.text() if ch not in exclude).lower()
-		existingTitle = ''.join(ch for ch in story['title'] if ch not in exclude).lower()
+		include = set(string.ascii_letters)
+		potentialTitle = ''.join(ch for ch in htmlObj.text() if ch in include).lower()
+		existingTitle = ''.join(ch for ch in story['title'] if ch in include).lower()
 		#print "comparing: " + potentialTitle + "|" + existingTitle
 
 		if potentialTitle == existingTitle:
@@ -289,4 +302,3 @@ def download(url, savepath):
 	f = file(savepath, 'wb')
 	f.write(data)
 	f.close()
-

@@ -127,11 +127,13 @@ def fetchData(options):
 	# pull down all the stories
 
 	storyCount = 0
+	pageCount = 0
 
 	for urlData in urls:
 
 		print "working on page: " + urlData['hash'] + ": " + urlData['url']
 		pageHtml = ""
+		pageCount = pageCount + 1
 
 		if not os.path.isfile("cache/" + urlData['hash']):
 			print "Fetching pageHtml from URL"
@@ -158,19 +160,19 @@ def fetchData(options):
 		for postNode in posts:
 			post = pq(postNode)
 
-			# skip the instruction post
-			if posts.eq(0) != post:
-				story = ffParseTools.processPost(post, storyTitles)
+			# skip the instruction post, but only on page 1.
+			if posts.eq(0) != post or pageCount > 1:
+				# finding that story authors and stories don't necessarily ever match.  thanks anonymous!
+				story = ffParseTools.processPost(post, storyTitles[storyCount], storyCount)
 
 				if story is not None:
-					storyCount = storyCount + 1
 					story['index'] = str(storyCount)
-
 					print str(storyCount) + ") " + story['author']
 					metaData['stories'].append(story)
 
+					storyCount = storyCount + 1
 
-	#print metaData['stories'][9]['html']
+	#print metaData['stories'][16]['title']
 	return metaData
 
 
@@ -232,26 +234,27 @@ def writeHtml(metaData):
 
 	# global image counter
 	imageCount = 0
+	storyCount = 0
 
 	for story in metaData['stories']:
 
-		if not os.path.isfile("cache/" + story['author'] + ".html"):
-			print "Generating story html"
+		if not os.path.isfile("cache/story-" + str(storyCount) + ".html"):
+			print "Generating final story html for story-" + str(storyCount)
 			storyHtmlString = ffParseTools.formatStoryHtml(story, metaData)
 
-			target = codecs.open("cache/" + story['author'] + ".html", 'w', "utf-8")
+			target = codecs.open("cache/story-" + str(storyCount) + ".html", 'w', "utf-8")
 			target.truncate()
 			target.write(storyHtmlString)
 			target.close()
 
 		else:
-			print "Fetching cleaned pageHtml from CACHE"
-			file = open("cache/" + story['author'] + ".html", 'r')
+			print "Fetching final story html for story-" + str(storyCount) + " from CACHE"
+			file = open("cache/story-" + str(storyCount) + ".html", 'r')
 			storyHtmlString = file.read().decode("utf8")
 			file.close()
 
-		# we are just going to keep rewriting the original html.
-		target = codecs.open("cache/" + story['author'] + "-original.html", 'w', "utf-8")
+		# we are just going to keep rewriting the original html, cache or not.
+		target = codecs.open("cache/story-" + str(storyCount) + "-original.html", 'w', "utf-8")
 		target.truncate()
 		target.write(story['html'])
 		target.close()
@@ -289,6 +292,8 @@ def writeHtml(metaData):
 
 		storyHtmlString = htmlObj.outer_html()
 		htmlOut = htmlOut + storyHtmlString
+
+		storyCount += 1
 
 	htmlOut = htmlOut + '</body></html>'
 

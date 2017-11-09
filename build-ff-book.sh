@@ -54,7 +54,7 @@ composite -geometry +60+1070 subtitle.jpg cover.jpg cover.jpg
 # make the epub and mobi.
 ebook-convert "output/${ShortTitle}.html" "output/${ShortTitle}.epub" --cover="cover.jpg" --authors="${Author}" --series="${Series}" --title="${Title}" --level1-toc="//h:h1" --use-auto-toc --chapter-mark=both --output-profile=ipad
 ebook-convert "output/${ShortTitle}.html" "output/${ShortTitle}.mobi" --cover="cover.jpg" --authors="${Author}" --series="${Series}" --title="${Title}" --level1-toc="//h:h1" --use-auto-toc --chapter-mark=both --output-profile=kindle
-#ebook-convert "output/${ShortTitle}.html" "output/${ShortTitle}.rtf" --cover="cover.jpg" --authors="${Author}" --series="${Series}" --title="${Title}" --level1-toc="//h:h1" --use-auto-toc --chapter-mark=both 
+#ebook-convert "output/${ShortTitle}.html" "output/${ShortTitle}.rtf" --cover="cover.jpg" --authors="${Author}" --series="${Series}" --title="${Title}" --level1-toc="//h:h1" --use-auto-toc --chapter-mark=both
 pandoc -s "output/${ShortTitle}-rtf.html" -o "output/${ShortTitle}.docx"
 
 
